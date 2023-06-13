@@ -1,6 +1,13 @@
 resource "google_service_account" "toronto_gke_sa" {
   account_id   = "toronto-gke-sa"
   display_name = "Toronto GKE Service Account"
+  project = var.gcp-project-id
+}
+
+resource "google_project_iam_binding" "toronto_gke_network_binding" {
+  project = var.gcp-project-id
+  role    = "roles/compute.networkViewer"
+  members = ["serviceAccount:${google_service_account.toronto_gke_sa.email}"]
 }
 
 
@@ -54,7 +61,32 @@ resource "google_project_iam_binding" "toronto_gke_sa_binding_projectIamAdmin" {
 
 
 resource "google_project_iam_binding" "secrets_manager_access" {
-  role    = "roles/secretmanager.secretAccessor"
+  role    = "roles/secretmanager.admin"
   project = var.gcp-project-id
   members = ["serviceAccount:${google_service_account.toronto_gke_sa.email}"]
 }
+
+resource "google_project_iam_binding" "toronto_gke_sa_binding_DNSAdmin" {
+  project = var.gcp-project-id
+  role    = "roles/dns.admin"
+  members = ["serviceAccount:${google_service_account.toronto_gke_sa.email}"]
+}
+
+resource "google_project_iam_binding" "multiclusterservicediscovery_serviceAgent" {
+  project = var.gcp-project-id
+  role    = "roles/multiclusterservicediscovery.serviceAgent"
+  members = ["serviceAccount:${google_service_account.toronto_gke_sa.email}"]
+}
+
+resource "google_project_iam_binding" "gkehub_serviceAgent" {
+  project = var.gcp-project-id
+  role    = "roles/gkehub.serviceAgent"
+  members = ["serviceAccount:${google_service_account.toronto_gke_sa.email}"]
+}
+
+resource "google_project_iam_binding" "toronto_storage_sa_binding_admin" {
+  project = var.gcp-project-id
+  role    = "roles/storage.admin"
+  members = ["serviceAccount:${google_service_account.toronto_gke_sa.email}"]
+}
+

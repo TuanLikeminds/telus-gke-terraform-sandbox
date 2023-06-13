@@ -1,10 +1,3 @@
-#resource "google_project_iam_binding" "pingdirectory_network_viewer" {
-#  project = var.gcp-project-id
-#  role    = "roles/compute.networkViewer"
-#  members = [
-#    "serviceAccount:pingdirectory-358917.svc.id.goog[gke-mcs/gke-mcs-importer]"
-#  ]
-#}
 
 resource "google_project_iam_member" "pingdirectory_network_viewer" {
   project = var.gcp-project-id

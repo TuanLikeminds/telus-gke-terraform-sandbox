@@ -18,7 +18,7 @@ module "gke" {
   ip_range_pods              = "montreal-prod-pod-ip-range-1"
   ip_range_services          = "montreal-prod-service-ip-range-2"
   http_load_balancing        = true
-  network_policy             = true
+  network_policy             = false
   horizontal_pod_autoscaling = true
   filestore_csi_driver       = false
   grant_registry_access      = true   #enable access to GCP container registries in the project. Creates SA
@@ -26,6 +26,7 @@ module "gke" {
   enable_shielded_nodes      = true
   gke_backup_agent_config	   = true
   release_channel            = "UNSPECIFIED"
+  
 
   node_pools = [
     {
@@ -44,10 +45,11 @@ module "gke" {
       auto_repair               = true
       auto_upgrade              = true #changed to false
       version                   = "1.25.8-gke.500"
-      service_account           = "montreal-gke-sa@pingdirectory-358917.iam.gserviceaccount.com"
+      service_account           = "montreal-gke-sa@${var.gcp-project-id}.iam.gserviceaccount.com"
       preemptible               = false
       initial_node_count        = 1
       autoscaling               = true
+      enable_workload_identity   = true
     },
   ]
 

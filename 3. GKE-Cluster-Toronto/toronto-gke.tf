@@ -18,19 +18,20 @@ module "gke" {
   ip_range_pods              = "toronto-prod-pod-ip-range-1"
   ip_range_services          = "toronto-prod-service-ip-range-2"
   http_load_balancing        = true
-  network_policy             = true
+  network_policy             = false
   horizontal_pod_autoscaling = true
   filestore_csi_driver       = false
   grant_registry_access      = true   #enable access to GCP container registries in the project. Creates SA
   registry_project_ids       = [var.gcp-project-id] #specify project
   enable_shielded_nodes      = true
   gke_backup_agent_config	   = true
-  release_channel            = "STABLE"
+  release_channel            = "UNSPECIFIED"
+  
 
   node_pools = [
     {
       name                      = "ping-stack-node-pool"
-      machine_type              = "e2-standard-2"
+      machine_type              = "e2-standard-4"
       node_locations            = "northamerica-northeast2-a"
       min_count                 = 1
       max_count                 = 3
@@ -44,10 +45,11 @@ module "gke" {
       auto_repair               = true
       auto_upgrade              = true #changed to false
       version                   = "1.24.11-gke.1000"
-      service_account           = "toronto-gke-sa@pingdirectory-358917.iam.gserviceaccount.com"
+      service_account           = "toronto-gke-sa@${var.gcp-project-id}.iam.gserviceaccount.com"
       preemptible               = false
       initial_node_count        = 1
       autoscaling               = true
+      enable_workload_identity   = true
     },
   ]
 

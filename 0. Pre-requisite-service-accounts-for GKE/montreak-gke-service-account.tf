@@ -1,6 +1,13 @@
 resource "google_service_account" "montreal_gke_sa" {
   account_id   = "montreal-gke-sa"
   display_name = "montreal GKE Service Account"
+  project = var.gcp-project-id
+}
+
+resource "google_project_iam_binding" "montreal_gke_network_binding" {
+  project = var.gcp-project-id
+  role    = "roles/compute.networkViewer"
+  members = ["serviceAccount:${google_service_account.montreal_gke_sa.email}"]
 }
 
 resource "google_project_iam_binding" "bind_montreal_gke_sa_to_artifact_registry" {
@@ -51,5 +58,15 @@ resource "google_project_iam_binding" "montreal_gke_sa_binding_projectIamAdmin" 
   members = ["serviceAccount:${google_service_account.montreal_gke_sa.email}"]
 }
 
+resource "google_project_iam_binding" "montreal_gke_sa_binding_DNSAdmin" {
+  project = var.gcp-project-id
+  role    = "roles/dns.admin"
+  members = ["serviceAccount:${google_service_account.montreal_gke_sa.email}"]
+}
 
+resource "google_project_iam_binding" "montreal_gke_secrets_manager_access" {
+  project = var.gcp-project-id
+  role    = "roles/secretmanager.admin"
+  members = ["serviceAccount:${google_service_account.montreal_gke_sa.email}"]
+}
 
